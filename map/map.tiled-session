@@ -1,0 +1,46 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "map.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "TX Tileset Stone Ground.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "lanshaft1.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map.tmx": {
+            "scale": 1.3359375,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 586.1052631578947,
+                "y": 434.9005847953216
+            }
+        },
+        "map.tmx#lanshaft1": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "C:/Users/foksha.as/Desktop/С рабочего стола/mmorpg/map/Texture",
+    "map.lastUsedFormat": "tmx",
+    "map.renderOrder": null,
+    "map.width": 20,
+    "openFiles": [
+        "map.tmx",
+        "TX Tileset Stone Ground.tsx"
+    ],
+    "project": "map.tiled-project",
+    "recentFiles": [
+        "TX Tileset Stone Ground.tsx",
+        "map.tmx",
+        "lanshaft1.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx"
+}

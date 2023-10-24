@@ -13,6 +13,8 @@ def draw_tiled_map(tmxdata, screen):
                 if tile:
                     screen.blit(tile, (x * tmxdata.tilewidth, y * tmxdata.tileheight))
 
+tmxdata = load_pygame("./map/map.tmx")
+
 done = False
 
 x = 500
