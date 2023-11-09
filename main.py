@@ -1,6 +1,9 @@
 import pygame
 import pytmx
 from pytmx.util_pygame import load_pygame
+from player import Player
+
+player = Player()
 
 pygame.init()
 
@@ -34,8 +37,6 @@ done = False
 
 x = 500
 y = 400
-
-player = pygame.Rect(x, y, 50, 50)
 
 platform = pygame.Rect(0, 700, 1000, 100)
 platform2 = pygame.Rect(0, 0, 1000, 100)
