@@ -19,12 +19,14 @@ def rect_layer_tiled_map(tmxdata, nameLayer):
     layer = tmxdata.get_layer_by_name(nameLayer)
     if isinstance(layer, pytmx.TiledTileLayer):
         for x, y, gid, in layer:
-            rects.append(pygame.Rect(
-                x * tmxdata.tilewidth,
-                y * tmxdata.tileheight,
-                tmxdata.tilewidth,
-                tmxdata.tileheight
-            ))
+            tile = tmxdata.get_tile_image_by_gid(gid)
+            if tile:
+                rects.append(pygame.Rect(
+                    x * tmxdata.tilewidth,
+                    y * tmxdata.tileheight,
+                    tmxdata.tilewidth,
+                    tmxdata.tileheight
+                ))
     return rects
 
 tmxdata = load_pygame("./map/map.tmx")
@@ -58,19 +60,19 @@ while not done:
     if keypressed[pygame.K_s]:
         phantom_player: pygame.Rect = player.copy()
         phantom_player.y += 2
-        isCollide = phantom_player.collidelist([platform, platform2, platform3, platform4])
+        isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
         if isCollide == -1:
             player.y += 2
     if keypressed[pygame.K_a]:
         phantom_player: pygame.Rect = player.copy()
         phantom_player.x -= 2
-        isCollide = phantom_player.collidelist([platform, platform2, platform3, platform4])
+        isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
         if isCollide == -1:
             player.x -= 2
     if keypressed[pygame.K_d]:
         phantom_player: pygame.Rect = player.copy()
         phantom_player.x += 2
-        isCollide = phantom_player.collidelist([platform, platform2, platform3, platform4])
+        isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
         if isCollide == -1:
             player.x += 2
 
