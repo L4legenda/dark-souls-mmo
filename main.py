@@ -80,5 +80,6 @@ while not done:
     screen.fill((255, 255, 255))
     draw_tiled_map(tmxdata, screen)
     pygame.draw.rect(screen, (0, 128, 255), player)
+    player.render(screen)
     pygame.display.flip()
     clock.tick(60)
