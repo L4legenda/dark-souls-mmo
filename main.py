@@ -17,20 +17,7 @@ def draw_tiled_map(tmxdata, screen):
                 if tile:
                     screen.blit(tile, (x * tmxdata.tilewidth, y * tmxdata.tileheight))
 
-def rect_layer_tiled_map(tmxdata, nameLayer):
-    rects = []
-    layer = tmxdata.get_layer_by_name(nameLayer)
-    if isinstance(layer, pytmx.TiledTileLayer):
-        for x, y, gid, in layer:
-            tile = tmxdata.get_tile_image_by_gid(gid)
-            if tile:
-                rects.append(pygame.Rect(
-                    x * tmxdata.tilewidth,
-                    y * tmxdata.tileheight,
-                    tmxdata.tilewidth,
-                    tmxdata.tileheight
-                ))
-    return rects
+
 
 tmxdata = load_pygame("./map/map.tmx")
 done = False
@@ -49,37 +36,21 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
+            player.stopThread()
 
     keypressed = pygame.key.get_pressed()
 
     if keypressed[pygame.K_w]:
-        phantom_player: pygame.Rect = player.copy()
-        phantom_player.y -= 2
-        isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
-        if isCollide == -1:
-            player.y -= 2
+        player.moveUp(tmxdata)
     if keypressed[pygame.K_s]:
-        phantom_player: pygame.Rect = player.copy()
-        phantom_player.y += 2
-        isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
-        if isCollide == -1:
-            player.y += 2
+        player.moveDown(tmxdata)
     if keypressed[pygame.K_a]:
-        phantom_player: pygame.Rect = player.copy()
-        phantom_player.x -= 2
-        isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
-        if isCollide == -1:
-            player.x -= 2
+        player.moveLeft(tmxdata)
     if keypressed[pygame.K_d]:
-        phantom_player: pygame.Rect = player.copy()
-        phantom_player.x += 2
-        isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
-        if isCollide == -1:
-            player.x += 2
+        player.moveRight(tmxdata)
 
     screen.fill((255, 255, 255))
     draw_tiled_map(tmxdata, screen)
-    pygame.draw.rect(screen, (0, 128, 255), player)
     player.render(screen)
-    pygame.display.flip()
+    pygame.display.update()
     clock.tick(60)
