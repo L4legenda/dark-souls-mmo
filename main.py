@@ -49,6 +49,12 @@ while not done:
     if keypressed[pygame.K_d]:
         player.moveRight(tmxdata)
 
+    if (not keypressed[pygame.K_w] and
+        not keypressed[pygame.K_s] and
+        not keypressed[pygame.K_a] and
+        not keypressed[pygame.K_d]):
+        player.handlerUpKeyMove()
+
     screen.fill((255, 255, 255))
     draw_tiled_map(tmxdata, screen)
     player.render(screen)
