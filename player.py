@@ -11,10 +11,20 @@ class Player(pygame.Rect):
     idle_left = []
     idle_right = []
 
+    run_down = []
+    run_up = []
+    run_left = []
+    run_right = []
+
     idle_down_index = 0
     idle_up_index = 0
     idle_right_index = 0
     idle_left_index = 0
+
+    run_down_index = 0
+    run_up_index = 0
+    run_right_index = 0
+    run_left_index = 0
 
     lifeThread = True
 
@@ -28,6 +38,9 @@ class Player(pygame.Rect):
         self.loadSpriteIdleDown()
         self.loadSpriteIdleRight()
         self.loadSpriteIdleLeft()
+        self.loadSpriteIdleUp()
+        self.loadSpriteRunDown()
+
         self.threads()
 
     def loadImage(self):
@@ -71,6 +84,21 @@ class Player(pygame.Rect):
         self.idle_right.append(img5)
         self.idle_right.append(img6)
 
+    def loadSpriteIdleUp(self):
+        size_image = 48
+        img1 = self.crop((0, size_image*2, size_image, size_image))
+        img2 = self.crop((size_image, size_image*2, size_image, size_image))
+        img3 = self.crop((size_image*2, size_image*2, size_image, size_image))
+        img4 = self.crop((size_image*3, size_image*2, size_image, size_image))
+        img5 = self.crop((size_image*4, size_image*2, size_image, size_image))
+        img6 = self.crop((size_image*5, size_image*2, size_image, size_image))
+        self.idle_up.append(img1)
+        self.idle_up.append(img2)
+        self.idle_up.append(img3)
+        self.idle_up.append(img4)
+        self.idle_up.append(img5)
+        self.idle_up.append(img6)
+
 
     def loadSpriteIdleLeft(self):
         size_image = 48
@@ -87,6 +115,21 @@ class Player(pygame.Rect):
         self.idle_left.append(img5)
         self.idle_left.append(img6)
 
+    def loadSpriteRunDown(self):
+        size_image = 48
+        img1 = self.crop((0, size_image*3, size_image, size_image), True)
+        img2 = self.crop((size_image, size_image*3, size_image, size_image), True)
+        img3 = self.crop((size_image*2, size_image*3, size_image, size_image), True)
+        img4 = self.crop((size_image*3, size_image*3, size_image, size_image), True)
+        img5 = self.crop((size_image*4, size_image*3, size_image, size_image), True)
+        img6 = self.crop((size_image*5, size_image*3, size_image, size_image), True)
+        self.run_down.append(img1)
+        self.run_down.append(img2)
+        self.run_down.append(img3)
+        self.run_down.append(img4)
+        self.run_down.append(img5)
+        self.run_down.append(img6)
+
     def render(self, screen: Surface):
         if self.state_rotation == 'idle_down':
             self.animateIdleDown(screen)
@@ -96,6 +139,8 @@ class Player(pygame.Rect):
             self.animateIdleLeft(screen)
         if self.state_rotation == 'idle_up':
             self.animateIdleUp(screen)
+        if self.state_rotation == 'run_down':
+            self.animateRunDown(screen)
 
     def animateIdleDown(self, screen: Surface):
         screen.blit(self.idle_down[self.idle_down_index], (self.x, self.y))
@@ -108,6 +153,9 @@ class Player(pygame.Rect):
 
     def animateIdleUp(self, screen: Surface):
         screen.blit(self.idle_up[self.idle_up_index], (self.x, self.y))
+
+    def animateRunDown(self, screen: Surface):
+        screen.blit(self.run_down[self.run_down_index], (self.x, self.y))
 
     def threadMoveIndex(self):
         while self.lifeThread:
@@ -140,6 +188,13 @@ class Player(pygame.Rect):
             if idle_left_index >= len(self.idle_left):
                 idle_left_index = 0
             self.idle_left_index = idle_left_index
+
+            # Run Down
+            run_down_index = self.run_down_index
+            run_down_index += 1
+            if run_down_index >= len(self.run_down):
+                run_down_index = 0
+            self.run_down_index = run_down_index
 
     def threads(self):
         t1 = Thread(target=self.threadMoveIndex)
