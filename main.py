@@ -2,8 +2,12 @@ import pygame
 import pytmx
 from pytmx.util_pygame import load_pygame
 from player import Player
+from Mob import Mob
 
 player = Player()
+
+mobs = []
+mobs.append(Mob())
 
 pygame.init()
 
@@ -37,6 +41,8 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
             player.stopThread()
+            for mob in mobs:
+                mob.stopThread()
 
     keypressed = pygame.key.get_pressed()
 
@@ -58,5 +64,10 @@ while not done:
     screen.fill((255, 255, 255))
     draw_tiled_map(tmxdata, screen)
     player.render(screen)
+
+    for mob in mobs:
+        mob.render(screen)
+        mob.agro(player)
+
     pygame.display.update()
     clock.tick(60)
