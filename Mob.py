@@ -2,6 +2,7 @@ import pygame
 from pygame import Rect, Surface
 from time import sleep
 from threading import Thread
+from player import Player
 
 class Mob(Rect):
     sprite = None
@@ -101,9 +102,14 @@ class Mob(Rect):
         dis = pygame.math.Vector2(self.x, self.y).distance_to((player.x, player.y))
         if dis <= 100:
             self.moveToPlayer(player)
-    def moveToPlayer(self, player: Rect):
+    def moveToPlayer(self, player: Player):
         vx = 0
         vy = 0
+
+        is_collide = self.colliderect(player)
+        if is_collide:
+            player.attack(4)
+            return
 
         if self.x - player.x > 0:
             vx = -self.move_speed

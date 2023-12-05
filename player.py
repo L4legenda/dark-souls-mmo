@@ -3,6 +3,7 @@ from pygame import Surface, Rect
 from threading import Thread
 from time import sleep
 from utils import rect_layer_tiled_map
+from datetime import datetime, timedelta
 
 class Player(pygame.Rect):
     sprite: Surface = None
@@ -30,6 +31,11 @@ class Player(pygame.Rect):
 
     state_rotation = "idle_down"
 
+    hp = 100
+    max_hp = 100
+
+    time_attack = None
+
     def __init__(self):
         Rect.__init__(self, 100, 100, 32, 32)
         self.loadImage()
@@ -42,6 +48,16 @@ class Player(pygame.Rect):
         self.loadSpriteIdleUp()
         self.loadSpriteRunUp()
         self.threads()
+
+    def attack(self, hp):
+        if self.time_attack:
+            now = datetime.now()
+            delta = now - self.time_attack
+            if delta.microseconds < 150_000:
+                return
+        print(self.hp)
+        self.hp -= hp
+        self.time_attack = datetime.now()
 
     def loadImage(self):
         self.sprite = pygame.image.load("player.png")
