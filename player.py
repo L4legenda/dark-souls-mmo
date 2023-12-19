@@ -9,6 +9,8 @@ class Player(pygame.Rect):
     sprite: Surface = None
     idle_down = []
     run_down = []
+    attack_down = []
+
     idle_right = []
     run_right = []
     idle_up = []
@@ -18,6 +20,8 @@ class Player(pygame.Rect):
 
     idle_down_index = 0
     run_down_index = 0
+    attack_down_index = 0
+
     idle_up_index = 0
     run_up_index = 0
     idle_right_index = 0
@@ -28,6 +32,10 @@ class Player(pygame.Rect):
     lifeThread = True
 
     move_speed = 2
+
+    hasRenderIdle = True
+    hasRenderRun = True
+    hasRenderAttack = True
 
     state_rotation = "idle_down"
 
@@ -69,6 +77,17 @@ class Player(pygame.Rect):
         if flip:
             img = pygame.transform.flip(img, True, False)
         return img
+
+    def loadSpriteAttackDown(self):
+        img1 = self.crop((0, 48*6, 48, 48))
+        img2 = self.crop((48, 48*6, 48, 48))
+        img3 = self.crop((48 * 2, 48*6, 48, 48))
+        img4 = self.crop((48 * 3, 48*6, 48, 48))
+
+        self.attack_down.append(img1)
+        self.attack_down.append(img2)
+        self.attack_down.append(img3)
+        self.attack_down.append(img4)
 
     def loadSpriteIdleDown(self):
         img1 = self.crop((0, 0, 48, 48))
@@ -199,6 +218,11 @@ class Player(pygame.Rect):
             self.animateIdleUp(screen)
         if self.state_rotation == "run_up":
             self.animateRunUp(screen)
+        if self.state_rotation == "attack_down":
+            self.animateAttackDown(screen)
+
+    def animateAttackDown(self, screen: Surface):
+        screen.blit(self.attack_down[self.attack_down_index], (self.x, self.y))
 
     def animateIdleDown(self, screen: Surface):
         screen.blit(self.idle_down[self.idle_down_index], (self.x, self.y))
@@ -275,6 +299,19 @@ class Player(pygame.Rect):
             if run_left_index >= len(self.run_left):
                 run_left_index = 1
             self.run_left_index = run_left_index
+            # Attack Down
+            attack_down_index = self.attack_down_index
+            attack_down_index += 1
+            if attack_down_index >= len(self.attack_down):
+                attack_down_index = 1
+            self.attack_down_index = attack_down_index
+
+    def timerAttack(self):
+        while self.lifeThread:
+            sleep(0.3333)
+            if (self.state_rotation in ["idle_down", "run_down"]
+                    and self.hasRenderAttack):
+                self.state_rotation = "attack_down"
 
     def threads(self):
         t1 = Thread(target=self.threadMoveIndex)
@@ -289,7 +326,8 @@ class Player(pygame.Rect):
         isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
         if isCollide == -1:
             self.y -= self.move_speed
-            self.state_rotation = "run_up"
+            if self.hasRenderRun:
+                self.state_rotation = "run_up"
 
     def moveDown(self, tmxdata):
         phantom_player: pygame.Rect = self.copy()
