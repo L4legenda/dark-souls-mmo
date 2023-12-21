@@ -13,10 +13,16 @@ class Player(pygame.Rect):
 
     idle_right = []
     run_right = []
+    attack_right = []
+
     idle_up = []
     run_up = []
+    attack_up = []
+
     run_left = []
     idle_left = []
+    attack_left = []
+
 
     idle_down_index = 0
     run_down_index = 0
@@ -24,10 +30,15 @@ class Player(pygame.Rect):
 
     idle_up_index = 0
     run_up_index = 0
+    attack_up_index = 0
+
     idle_right_index = 0
     run_right_index = 0
+    attack_right_index = 0
+
     idle_left_index = 0
     run_left_index = 0
+    attack_left_index = 0
 
     lifeThread = True
 
@@ -55,6 +66,13 @@ class Player(pygame.Rect):
         self.loadSpriteRunLeft()
         self.loadSpriteIdleUp()
         self.loadSpriteRunUp()
+
+        self.loadSpriteAttackDown()
+        self.loadSpriteAttackUp()
+        self.loadSpriteAttackLeft()
+        self.loadSpriteAttackRight()
+
+
         self.threads()
 
     def attack(self, hp):
@@ -88,6 +106,39 @@ class Player(pygame.Rect):
         self.attack_down.append(img2)
         self.attack_down.append(img3)
         self.attack_down.append(img4)
+
+    def loadSpriteAttackUp(self):
+        img1 = self.crop((0, 48*8, 48, 48))
+        img2 = self.crop((48, 48*8, 48, 48))
+        img3 = self.crop((48 * 2, 48*8, 48, 48))
+        img4 = self.crop((48 * 3, 48*8, 48, 48))
+
+        self.attack_up.append(img1)
+        self.attack_up.append(img2)
+        self.attack_up.append(img3)
+        self.attack_up.append(img4)
+
+    def loadSpriteAttackRight(self):
+        img1 = self.crop((0, 48*7, 48, 48))
+        img2 = self.crop((48, 48*7, 48, 48))
+        img3 = self.crop((48 * 2, 48*7, 48, 48))
+        img4 = self.crop((48 * 3, 48*7, 48, 48))
+
+        self.attack_right.append(img1)
+        self.attack_right.append(img2)
+        self.attack_right.append(img3)
+        self.attack_right.append(img4)
+
+    def loadSpriteAttackLeft(self):
+        img1 = self.crop((0, 48*7, 48, 48), True)
+        img2 = self.crop((48, 48*7, 48, 48), True)
+        img3 = self.crop((48 * 2, 48*7, 48, 48), True)
+        img4 = self.crop((48 * 3, 48*7, 48, 48), True)
+
+        self.attack_left.append(img1)
+        self.attack_left.append(img2)
+        self.attack_left.append(img3)
+        self.attack_left.append(img4)
 
     def loadSpriteIdleDown(self):
         img1 = self.crop((0, 0, 48, 48))
@@ -220,9 +271,41 @@ class Player(pygame.Rect):
             self.animateRunUp(screen)
         if self.state_rotation == "attack_down":
             self.animateAttackDown(screen)
+        if self.state_rotation == "attack_up":
+            self.animateAttackUp(screen)
+        if self.state_rotation == "attack_right":
+            self.animateAttackRight(screen)
+        if self.state_rotation == "attack_left":
+            self.animateAttackLeft(screen)
 
     def animateAttackDown(self, screen: Surface):
+        if self.attack_down_index == len(self.attack_down) - 1:
+            self.finishAttack()
+
         screen.blit(self.attack_down[self.attack_down_index], (self.x, self.y))
+
+    def animateAttackUp(self, screen: Surface):
+        if self.attack_up_index == len(self.attack_up) - 1:
+            self.finishAttack()
+
+        screen.blit(self.attack_up[self.attack_up_index], (self.x, self.y))
+
+    def animateAttackRight(self, screen: Surface):
+        if self.attack_right_index == len(self.attack_right) - 1:
+            self.finishAttack()
+
+        screen.blit(self.attack_right[self.attack_right_index], (self.x, self.y))
+
+    def animateAttackLeft(self, screen: Surface):
+        if self.attack_left_index == len(self.attack_left) - 1:
+            self.finishAttack()
+
+        screen.blit(self.attack_left[self.attack_left_index], (self.x, self.y))
+
+
+    def finishAttack(self):
+        self.hasRenderIdle = True
+        self.hasRenderRun = True
 
     def animateIdleDown(self, screen: Surface):
         screen.blit(self.idle_down[self.idle_down_index], (self.x, self.y))
@@ -306,16 +389,63 @@ class Player(pygame.Rect):
                 attack_down_index = 1
             self.attack_down_index = attack_down_index
 
+            # Attack Up
+            attack_up_index = self.attack_up_index
+            attack_up_index += 1
+            if attack_up_index >= len(self.attack_up):
+                attack_up_index = 1
+            self.attack_up_index = attack_up_index
+
+            # Attack Right
+            attack_right_index = self.attack_right_index
+            attack_right_index += 1
+            if attack_right_index >= len(self.attack_right):
+                attack_right_index = 1
+            self.attack_right_index = attack_right_index
+
+            # Attack Left
+            attack_left_index = self.attack_left_index
+            attack_left_index += 1
+            if attack_left_index >= len(self.attack_left):
+                attack_left_index = 1
+            self.attack_left_index = attack_left_index
+
     def timerAttack(self):
         while self.lifeThread:
-            sleep(0.3333)
+            sleep(1.5)
             if (self.state_rotation in ["idle_down", "run_down"]
                     and self.hasRenderAttack):
+                self.hasRenderIdle = False
+                self.hasRenderRun = False
                 self.state_rotation = "attack_down"
+                self.attack_down_index = 0
+
+            if (self.state_rotation in ["idle_up", "run_up"]
+                    and self.hasRenderAttack):
+                self.hasRenderIdle = False
+                self.hasRenderRun = False
+                self.state_rotation = "attack_up"
+                self.attack_up_index = 0
+
+            if (self.state_rotation in ["idle_right", "run_right"]
+                    and self.hasRenderAttack):
+                self.hasRenderIdle = False
+                self.hasRenderRun = False
+                self.state_rotation = "attack_right"
+                self.attack_right_index = 0
+            if (self.state_rotation in ["idle_left", "run_left"]
+                    and self.hasRenderAttack):
+                self.hasRenderIdle = False
+                self.hasRenderRun = False
+                self.state_rotation = "attack_left"
+                self.attack_left_index = 0
 
     def threads(self):
         t1 = Thread(target=self.threadMoveIndex)
         t1.start()
+
+        t2 = Thread(target=self.timerAttack)
+        t2.start()
 
     def stopThread(self):
         self.lifeThread = False
@@ -335,7 +465,8 @@ class Player(pygame.Rect):
         isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
         if isCollide == -1:
             self.y += self.move_speed
-            self.state_rotation = "run_down"
+            if self.hasRenderRun:
+                self.state_rotation = "run_down"
 
     def moveRight(self, tmxdata):
         phantom_player: pygame.Rect = self.copy()
@@ -343,7 +474,8 @@ class Player(pygame.Rect):
         isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
         if isCollide == -1:
             self.x += self.move_speed
-            self.state_rotation = "run_right"
+            if self.hasRenderRun:
+                self.state_rotation = "run_right"
 
     def moveLeft(self, tmxdata):
         phantom_player: pygame.Rect = self.copy()
@@ -351,17 +483,20 @@ class Player(pygame.Rect):
         isCollide = phantom_player.collidelist(rect_layer_tiled_map(tmxdata, "Слой тайлов 2"))
         if isCollide == -1:
             self.x -= self.move_speed
-            self.state_rotation = "run_left"
+            if self.hasRenderRun:
+                self.state_rotation = "run_left"
 
     def handlerUpKeyMove(self):
-        if self.state_rotation == "run_up":
+        if not self.hasRenderIdle:
+            return
+        if self.state_rotation in ["run_up", "attack_up"]:
             self.state_rotation = "idle_up"
 
-        if self.state_rotation == "run_down":
+        if self.state_rotation in ["run_down", "attack_down"]:
             self.state_rotation = "idle_down"
 
-        if self.state_rotation == "run_left":
+        if self.state_rotation in ["run_left", "attack_left"]:
             self.state_rotation = "idle_left"
 
-        if self.state_rotation == "run_right":
+        if self.state_rotation in ["run_right", "attack_right"]:
             self.state_rotation = "idle_right"
